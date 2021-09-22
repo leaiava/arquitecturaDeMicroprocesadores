@@ -1,0 +1,13 @@
+../ejemplo/inc
+../ejemplo/src
+../lib/lpc_board_ciaa_edu_4337/inc
+../
+../lib/lpc_board_ciaa_edu_4337/src
+../app/src
+../lib/lpc_chip_43xx/inc
+../lib/lpc_chip_43xx
+.
+../app/inc
+../lib
+../lib/lpc_chip_43xx/src
+../lib/lpc_chip_43xx/inc/usbd
