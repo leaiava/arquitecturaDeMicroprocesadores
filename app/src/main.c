@@ -45,6 +45,14 @@ static void Suma (void)
     (void) SumResult_Asm;
 }
 
+static void Zeros (void)
+{
+	uint32_t vector[8] = { (uint32_t)-1, (uint32_t)-2, (uint32_t)-3,
+						   (uint32_t)-4, (uint32_t)-5, (uint32_t)-6,
+						   (uint32_t)-7, (uint32_t)-8 };
+
+	asm_zeros (vector,8);
+}
 
 static void LlamandoAMalloc (void)
 {
@@ -144,11 +152,13 @@ int main (void)
 {
     Inicio ();
 
-    Suma ();
+    Zeros ();
 
-    PrivilegiosSVC ();
+    //Suma ();
 
-    LlamandoAMalloc ();
+    //PrivilegiosSVC ();
+
+    //LlamandoAMalloc ();
 
     LoopInfinito ();
 }

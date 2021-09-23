@@ -5,6 +5,8 @@
 @ Simbolos exportados
 .global asm_sum
 .global asm_svc
+.global	asm_zeros
+.global	asm_productoEscalar32
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Prototipo en "C":
@@ -40,3 +42,38 @@
     asm_svc:
         svc 0
         bx lr
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Prototipo en "C":
+@ void asm_zeros (uint32_t *vector, uint32_t longitud);
+@
+@ Parametros recibidos:
+@   r0: *vector
+@   r1: longitud
+@
+.thumb_func
+	asm_zeros:
+		@ r2: valor cero
+		mov	r2,	0			@ constante cero
+		mov r3,	0			@
+	.loop:
+		str	r2, [r0], 4		@ sizeof(uint32_t) = 4 por eso hago un post incremento de 4,	en c sería *vector++ = 4
+
+		subs	r1, 1		@ --longitud agrego la "s" para que la instrucción actualice los flags
+		bne	.loop			@ salto mientras Z=0, cuando Z=1 no hago el salto a .loop
+		bx	lr
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Prototipo en "C":
+@ void asm_productoEscalar32 (uint32_t * vectorIn, uint32_t * vectorOut uint32_t longitud, uint32_t escalar);void asm_zeros (uint32_t *vector, uint32_t longitud);
+@
+@ Parametros recibidos:
+@   r0: *vectorIn
+@   r1: *vectorOut
+@	r2: longitud
+@	r3: escalar
+@
+.thumb_func
+	asm_productoEscalar32:
+
+		//push	r4,	0
