@@ -65,7 +65,7 @@
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Prototipo en "C":
-@ void asm_productoEscalar32 (uint32_t * vectorIn, uint32_t * vectorOut uint32_t longitud, uint32_t escalar);void asm_zeros (uint32_t *vector, uint32_t longitud);
+@ void asm_productoEscalar32 (uint32_t * vectorIn, uint32_t * vectorOut, uint32_t longitud, uint32_t escalar);
 @
 @ Parametros recibidos:
 @   r0: *vectorIn
@@ -75,5 +75,16 @@
 @
 .thumb_func
 	asm_productoEscalar32:
+		push	{r4}			@ r4 lo voy a usar para tener el resultado de la multiplicacion
+		push	{r5}			@ r5 lo voy a usar para cargar el valor de [r0]
+	.loop2:
+		ldr		r5, [r0]		@ cargo en r5 el valor apuntado por r0
+		mul		r4, r5, r3		@ r4 = r5 * r3
+		str		r4, [r1], 4		@ cargo el resultado de la multiplicacion en [r1] e incremento en 4 a r1
+		add		r0, 4			@ incremento en 4 a r0
+		subs	r2, 1			@ --longitud y modifico los flags
+		bne		.loop2			@ si llegue a cero salgo del loop2
+		pop		{r5}			@ recupero r5
+		pop		{r4}			@ recupero r4
+		bx		lr				@ retorno
 
-		//push	r4,	0

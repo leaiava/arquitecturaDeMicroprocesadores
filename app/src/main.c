@@ -53,7 +53,13 @@ static void Zeros (void)
 
 	asm_zeros (vector,8);
 }
-
+static void Producto32 (void)
+{
+	uint32_t vectorIn[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+	uint32_t vectorOut[]= { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	uint32_t escalar = 2;
+	asm_productoEscalar32(vectorIn, vectorOut, 10, escalar);
+}
 static void LlamandoAMalloc (void)
 {
     // De donde saca memoria malloc?
@@ -153,6 +159,8 @@ int main (void)
     Inicio ();
 
     Zeros ();
+
+    Producto32();
 
     //Suma ();
 
