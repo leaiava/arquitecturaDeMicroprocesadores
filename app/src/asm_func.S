@@ -75,16 +75,17 @@
 @
 .thumb_func
 	asm_productoEscalar32:
-		push	{r4}			@ r4 lo voy a usar para tener el resultado de la multiplicacion
-		push	{r5}			@ r5 lo voy a usar para cargar el valor de [r0]
+		//push	{r4}			@ r4 lo voy a usar para tener el resultado de la multiplicacion
+		//push	{r5}			@ r5 lo voy a usar para cargar el valor de [r0]
+		push	{r4-r5}			@ Hago lo mismo que las 2 instrucciones anteriores pero todo en una
 	.loop2:
-		ldr		r5, [r0]		@ cargo en r5 el valor apuntado por r0
+		ldr		r5, [r0], 4		@ cargo en r5 el valor apuntado por r0 e incremento r0 en 4
 		mul		r4, r5, r3		@ r4 = r5 * r3
 		str		r4, [r1], 4		@ cargo el resultado de la multiplicacion en [r1] e incremento en 4 a r1
-		add		r0, 4			@ incremento en 4 a r0
 		subs	r2, 1			@ --longitud y modifico los flags
 		bne		.loop2			@ si llegue a cero salgo del loop2
-		pop		{r5}			@ recupero r5
-		pop		{r4}			@ recupero r4
+		//pop		{r5}			@ recupero r5
+		//pop		{r4}		@ recupero r4
+		pop		{r4-r5}			@ Hago lo mismo que las 2 instrucciones anteriores pero todo en una
 		bx		lr				@ retorno
 
