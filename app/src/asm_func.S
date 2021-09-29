@@ -57,10 +57,16 @@
 		mov	r2,	0			@ constante cero
 		mov r3,	0			@
 	.loop:
-		str	r2, [r0], 4		@ sizeof(uint32_t) = 4 por eso hago un post incremento de 4,	en c sería *vector++ = 4
-
+		str	r2, [r0], 4		@ sizeof(uint32_t) = 4 por eso hago un post incremento de 4
 		subs	r1, 1		@ --longitud agrego la "s" para que la instrucción actualice los flags
-		bne	.loop			@ salto mientras Z=0, cuando Z=1 no hago el salto a .loop
+	    beq .fin 			@ Si da cero salto al fin
+   	str r2, [r0], 4
+    	subs r1, 1
+    	beq .fin 			@ Si da cero salto al fin
+   	str r2, [r0], 4
+    	subs r1, 1
+		bne	.loop			@ salto mientras flag Z=0, cuando flag Z=1 (r1=0) no hago el salto a .loop
+	.fin:
 		bx	lr
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

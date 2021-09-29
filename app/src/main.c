@@ -6,6 +6,7 @@
 #include <stdnoreturn.h>
 
 
+
 // Variable que se incrementa cada vez que se llama al handler de interrupcion
 // del SYSTICK.
 static volatile uint32_t s_ticks = 0;
@@ -47,15 +48,29 @@ static void Suma (void)
 
 static void Zeros (void)
 {
+	volatile uint32_t * DWT_CTRL = (uint32_t *)0xE0001000;
+	volatile uint32_t * DWT_CYCCNT = (uint32_t *)0xE0001004;
+	uint32_t lectura;
+	*DWT_CTRL |= 1;
+
+	uint32_t vector[1000];
+/*
 	uint32_t vector[8] = { (uint32_t)-1, (uint32_t)-2, (uint32_t)-3,
 						   (uint32_t)-4, (uint32_t)-5, (uint32_t)-6,
 						   (uint32_t)-7, (uint32_t)-8 };
+*/
+	*DWT_CYCCNT=0;
+	zeros (vector,1000);
+	lectura = *DWT_CYCCNT;
 
-	asm_zeros (vector,8);
+	*DWT_CYCCNT=0;
+	asm_zeros (vector,1000);
+	lectura = *DWT_CYCCNT;
+	*DWT_CYCCNT=0;
 }
 static void Producto32 (void)
 {
-	static uint32_t vectorIn[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+	static uint32_t vectorIn[] = { 1, 2000000, 3, 4, 5, 6, 7, 8, 9, 10};
 	static uint32_t vectorOut[]= { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	static uint32_t escalar = 2;
 	asm_productoEscalar32(vectorIn, vectorOut, 10, escalar);
@@ -156,7 +171,8 @@ noreturn void LoopInfinito (void)
 
 int main (void)
 {
-    Inicio ();
+
+	Inicio ();
 
     Zeros ();
 
