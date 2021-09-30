@@ -142,9 +142,9 @@
 	.loop4:
 		ldrh	r5, [r0], 2		@ cargo en r5 el valor apuntado por r0 e incremento r0 en 4
 		mul		r4, r5, r3		@ r4 = r5 * r3
-		subs	r7, r4, r6
-		bmi		.menorA12bits
-		mov		r4, r6
+		subs	r7, r4, r6		@ le resto al resultado de la multiplicación 0X0FFF
+		bmi		.menorA12bits	@ Si da negativo salto, significa que la multiplicacion es menor a 0x0FFF
+		mov		r4, r6			@ Si no salto es porque la multiplicacion es mayor a 0x0FFF, muevo 0x0FFF como resultado saturado
 	.menorA12bits:
 		strh	r4, [r1], 2		@ cargo el resultado de la multiplicacion en [r1] e incremento en 4 a r1
 		subs	r2, 1			@ --longitud y modifico los flags
