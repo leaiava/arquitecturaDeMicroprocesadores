@@ -95,3 +95,26 @@
 		pop		{r4-r5}			@ Hago lo mismo que las 2 instrucciones anteriores pero todo en una
 		bx		lr				@ retorno
 
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Prototipo en "C":
+@ void asm_productoEscalar16 (uint16_t * vectorIn, uint16_t * vectorOut, uint32_t longitud, uint16_t escalar);
+@
+@ Parametros recibidos:
+@   r0: *vectorIn
+@   r1: *vectorOut
+@	r2: longitud
+@	r3: escalar
+@
+.thumb_func
+	asm_productoEscalar16:
+		push	{r4-r5}		@ r4 lo voy a usar para tener el resultado de la multiplicacion
+							@ r5 lo voy a usar para cargar el valor de [r0]
+	.loop3:
+		ldrh	r5, [r0], 2		@ cargo en r5 el valor apuntado por r0 e incremento r0 en 4
+		mul		r4, r5, r3		@ r4 = r5 * r3
+		strh	r4, [r1], 2		@ cargo el resultado de la multiplicacion en [r1] e incremento en 4 a r1
+		subs	r2, 1			@ --longitud y modifico los flags
+		bne		.loop2			@ si llegue a cero salgo del loop2
+		pop		{r4-r5}			@ recupero r5 y recupero r4
+		bx	lr
