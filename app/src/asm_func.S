@@ -7,6 +7,7 @@
 .global asm_svc
 .global	asm_zeros
 .global	asm_productoEscalar32
+.global	asm_productoEscalar16
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Prototipo en "C":
