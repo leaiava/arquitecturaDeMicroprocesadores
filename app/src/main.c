@@ -90,6 +90,18 @@ static void Producto16 (void)
 	asm_productoEscalar16(vectorIn, vectorOut2, 10, escalar);
 }
 
+static void Producto12 (void)
+{
+	static uint16_t vectorIn[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+	static uint16_t vectorOut1[]= { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	static uint16_t vectorOut2[]= { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	static uint32_t escalar = 2000;
+
+	c_productoEscalar12(vectorIn, vectorOut1, 10, escalar);
+
+	asm_productoEscalar12(vectorIn, vectorOut2, 10, escalar);
+}
+
 static void LlamandoAMalloc (void)
 {
     // De donde saca memoria malloc?
@@ -189,11 +201,13 @@ int main (void)
 
 	Inicio ();
 
-    Zeros ();
+    //Zeros ();
 
-    Producto32();
+    //Producto32();
 
-    Producto16();
+    //Producto16();
+
+    Producto12();
 
     //Suma ();
 

@@ -8,6 +8,7 @@
 .global	asm_zeros
 .global	asm_productoEscalar32
 .global	asm_productoEscalar16
+.global	asm_productoEscalar12
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Prototipo en "C":
@@ -118,4 +119,35 @@
 		subs	r2, 1			@ --longitud y modifico los flags
 		bne		.loop3			@ si llegue a cero salgo del loop2
 		pop		{r4-r5}			@ recupero r5 y recupero r4
+		bx	lr
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Prototipo en "C":
+@ void asm_productoEscalar12 (uint16_t * vectorIn, uint16_t * vectorOut, uint32_t longitud, uint16_t escalar);
+@
+@ Parametros recibidos:
+@   r0: *vectorIn
+@   r1: *vectorOut
+@	r2: longitud
+@	r3: escalar
+@
+
+.thumb_func
+	asm_productoEscalar12:
+		push	{r4-r7}		@ r4 lo voy a usar para tener el resultado de la multiplicacion
+							@ r5 lo voy a usar para cargar el valor de [r0]
+							@ r6 lo uso para tener cargado el valor 0x0FFF
+							@ r7 para calcular la resta que compara si la multiplicacion es mayor a 12bits (0x0FFF)
+		mov		r6, 0x1000
+		sub		r6, 1
+	.loop4:
+		ldrh	r5, [r0], 2		@ cargo en r5 el valor apuntado por r0 e incremento r0 en 4
+		mul		r4, r5, r3		@ r4 = r5 * r3
+		subs	r7, r4, r6
+		bmi		.menorA12bits
+		mov		r4, r6
+	.menorA12bits:
+		strh	r4, [r1], 2		@ cargo el resultado de la multiplicacion en [r1] e incremento en 4 a r1
+		subs	r2, 1			@ --longitud y modifico los flags
+		bne		.loop4			@ si llegue a cero salgo del loop2
+		pop		{r4-r7}			@ recupero r5 y recupero r4
 		bx	lr
