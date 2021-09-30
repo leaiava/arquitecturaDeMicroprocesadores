@@ -115,6 +115,6 @@
 		mul		r4, r5, r3		@ r4 = r5 * r3
 		strh	r4, [r1], 2		@ cargo el resultado de la multiplicacion en [r1] e incremento en 4 a r1
 		subs	r2, 1			@ --longitud y modifico los flags
-		bne		.loop2			@ si llegue a cero salgo del loop2
+		bne		.loop3			@ si llegue a cero salgo del loop2
 		pop		{r4-r5}			@ recupero r5 y recupero r4
 		bx	lr

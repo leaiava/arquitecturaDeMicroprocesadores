@@ -82,7 +82,7 @@ static void Producto16 (void)
 {
 	static uint16_t vectorIn[] = { 1, 200, 3, 4, 5, 6, 7, 8, 9, 10};
 	static uint16_t vectorOut[]= { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	static uint16_t escalar = 2;
+	static uint32_t escalar = 2;
 
 	c_productoEscalar32(vectorIn, vectorOut, 10, escalar);
 
