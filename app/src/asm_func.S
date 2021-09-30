@@ -137,6 +137,10 @@
 							@ r5 lo voy a usar para cargar el valor de [r0]
 							@ r6 lo uso para tener cargado el valor 0x0FFF
 							@ r7 para calcular la resta que compara si la multiplicacion es mayor a 12bits (0x0FFF)
+		subs	r4, r0, 1	@ le resto 1 a r0, si da negativo es que era null
+		bmi		.fin4		@ Si dio negativo salto, sino sigue
+		subs	r4, r1, 1	@ le resto 1 a r1, si da negativo es que era null y termino
+		bmi		.fin4
 		mov		r6, 0x1000
 		sub		r6, 1
 	.loop4:
@@ -149,5 +153,6 @@
 		strh	r4, [r1], 2		@ cargo el resultado de la multiplicacion en [r1] e incremento en 4 a r1
 		subs	r2, 1			@ --longitud y modifico los flags
 		bne		.loop4			@ si llegue a cero salgo del loop2
+	.fin4:
 		pop		{r4-r7}			@ recupero r5 y recupero r4
 		bx	lr
