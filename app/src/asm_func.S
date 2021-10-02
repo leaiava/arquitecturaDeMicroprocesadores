@@ -141,8 +141,7 @@
 		bmi		.fin4		@ Si dio negativo salto, sino sigue
 		subs	r4, r1, 1	@ le resto 1 a r1, si da negativo es que era null y termino
 		bmi		.fin4
-		mov		r6, 0x1000
-		sub		r6, 1
+		movw	r6, 0x0FFF
 	.loop4:
 		ldrh	r5, [r0], 2		@ cargo en r5 el valor apuntado por r0 e incremento r0 en 4
 		mul		r4, r5, r3		@ r4 = r5 * r3
