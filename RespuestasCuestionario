@@ -1,0 +1,101 @@
+1. Describa brevemente los diferentes perfiles de familias de microprocesadores/microcontroladores de ARM. Explique alguna de sus diferencias características.
+
+Existen 3 perfiles. 
+Aplicación: Orientados a la aplicación de sistemas embebidos de alta performance donde la latencia no es prioridad, un ejemplo de uso puede ser un smartphone. Incorporan un sistema de MMU (Memory Management unit) para hacer uso más eficiente de la memoria.
+Real Time: Orientados a aplicaciones de tiempo real donde la latencia y tener un tiempo determinista es primordial. Ejemplo de uso puede ser la computadora del freno ABS.
+Microcontroller: Orientados a productos de consumo masivo y compactos. Algunos incorporan una MPU (memory protection unit) Dentro del perfil M tenemos los M0 y M0+, orientados para bajo costo y bajo consumo. Despues tenemos M3, M4 y M7, que implementan más funciones, set de instrucciones mayor y mejores prestaciones.
+
+1. Describa brevemente las diferencias entre las familias de procesadores Cortex M0, M3 y M4.
+M0: Orientados a bajo consumo y bajo costo. Tienen una arquitectura de memoria tipo Von Neuman, esto quiere decir que tienen un solo bus de datos hacia la memoria, osea que por el mismo bus tienen que leer las instrucciones y los datos.
+M3 y M4 tienen una arquitectura de memoria tipo Harvard, esto quiere decir que tienen 2 buses hacia la memoria, uno para las instrucciones y otro para los datos. Como estan orientados a utilizar un OS incorporan un systick. El set de instrucciones es mayor que en M0, incorporan division por hardware y en el caso de los M4 opcionalmente FPU (floating point unit)
+
+2. ¿Por qué se dice que el set de instrucciones Thumb permite mayor densidad de código?
+Porque son instrucciones de 16 bits, por lo que entran el doble de instrucciones en la misma memoria. 
+
+3. ¿Qué entiende por arquitectura load-store? ¿Qué tipo de instrucciones no posee este tipo de arquitectura?
+Load-Store quiere decir que no podemos operar directamente en memoria, debemos cargar los datos de la memoria en los registros internos del procesador, operar con ellos y luego volver a guardarlos en memoria. 
+
+4. ¿Cómo es el mapa de memoria de la familia?
+Es un ùnico mapa de memoria plano de 4Gb, se direcciona con los 32bits, en este plano de memoria esta todo, el còdigo, la memoria RAM, perifericos, memoria externa, 
+
+5. ¿Qué ventajas presenta el uso de los “shadowed pointers” del PSP y el MSP?
+El MSP es el stack pointer que se ejecuta en modo privilegiado y el PSP en modo no provilegiado, esto quiere decir que una tarea de bajo nivel de privilegio no me va a romper el stack privilegiado, los puedo manejar por separado.  Las interrupciones corren en nivel privilegiado por lo que usan el MSP
+
+6. Describa los diferentes modos de privilegio y operación del Cortex M, sus relaciones y como se conmuta de uno al otro. Describa un ejemplo en el que se pasa del modo privilegiado a no privilegiado y nuevamente a privilegiado.
+El MCU puede ejecutar código en modo thread o en modo handler. En modo thread a su vez puede hacerlo en modo privilegiado o no privilegiado. Cuando está en modo privilegiado tiene acceso a todo, en modo no privilegiado se restringe el acceso a ciertos registros internos y sectores de memoria. El modo handler, es el modo en el que se ejecutan las excepciones y solo corren en modo privilegiado. No se puede pasar desde el modo thread no privilegiado al privilegiado directamente ya que no tengo los permisos correspondientes. Solo se puede volver al modo privilegiado desde una interrupción ya que las interrupciones están corriendo en modo privilegiado.
+
+7. ¿Qué se entiende por modelo de registros ortogonal? Dé un ejemplo
+
+8. ¿Qué ventajas presenta el uso de instrucciones de ejecución condicional (IT)? Dé un ejemplo
+Puedo ejecutar una instrucción u otra sin generar un salto, por lo que no se rompe el pipeline y el código es mucho más eficiente.
+Con el bit GE del APSR manejo la ejecución condicional
+
+ICI/IT del EPSR guardan en que estado de ejecución está la instrucción que se está ejecutando.
+
+ITTE NE
+ANDNE r0,r0,r1
+ADDNE r2,r2,#1
+MOVEQ r2,r3
+
+9. Describa brevemente las excepciones más prioritarias (reset, NMI, Hardfault).
+Son las únicas 3 que no se puede modificar su prioridad.
+Reset es la de más prioridad, tiene prioridad -3.
+NMI, prioridad -2, interrupción no enmascarable, esta conectada a un pin del micro, por lo general se usa con un watchdog. 
+Hard Fault, Acá caen todas las interrupciones de fallas, por ejemplo si tratas de acceder a un sector de memoria protegido por la MPU salta una excepción de estas.
+
+10. Describa las funciones principales de la pila. ¿Cómo resuelve la arquitectura el llamado a funciones y su retorno?
+La pila sirve para resguardar los registros del micro cuando hay un cambio de contexto y para guardar la dirección de retorno al contexto anterior. A través de la pila se pasan datos a funciones.
+
+11. Describa la secuencia de reset del microprocesador.
+En la dirección 0x00000000 de memoria tengo la dirección del MSP, esto es para que si ocurre una excepción a penas inicia tenga una pila, en el siguiente lugar de memoria, la 0x00000004 tengo el handler del reset, esta dirección apunta a la dirección de la función que se va a ejecutar al resetearse el micro.
+
+12. ¿Qué entiende por “core peripherals”? ¿Qué diferencia existe entre estos y el resto de los periféricos?
+Son los periféricos que define ARM para la arquitectura del cortex-M, son identicos en todos los fabricantes, como ser el sysTick y el NMI.
+
+13. ¿Cómo se implementan las prioridades de las interrupciones? Dé un ejemplo
+A las primeras 3 interrupciones no se le puede cambiar la prioridad. el resto pueden programarse hasta en 128 niveles de prioridad que no necesariamente están todos los niveles implementados. Algunos fabricantes implememtan 3 bits para manejar el nivel de prioridades, otros 4. No hacen falta todos los bits porque no tenemos tantos periféricos para conectar.
+
+14. ¿Qué es el CMSIS? ¿Qué función cumple? ¿Quién lo provee? ¿Qué ventajas aporta?
+El CMSIS es un standar entre todos los fabricantes de micros, lo provee ARM y nos asegura la portabilidad entre distintos fabricantes de micros ya que todos deben cumplir con CMSIS, despues cada uno puede agregar cosas particulares, pero el standar lo deben cumplir.
+
+15. Cuando ocurre una interrupción, asumiendo que está habilitada ¿Cómo opera el microprocesador para atender a la subrutina correspondiente? Explique con un ejemplo
+Resguarda el valor de los registros en la pila, tambien guarda el valor del program counter en la pila para tener la posición de retorno. Del vector de interrupciones obtiene la dirección de memoria donde esta el handler de la interrupción. 
+
+17. ¿Cómo cambia la operación de stacking al utilizar la unidad de punto flotante?
+Normalmente el stacking demora 12 pulsos de reloj, pero si tenemos la FPU habilitada el micro debe resguardar todos los registros de la FPU y el stacking se hace mucho más lento, pasa a demorar treinta y pico de ciclos de reloj. En realidad el micro no pudhea todos los registros de la FPU,deja el lugar necesario en la pila, y si durante el handler de interrupcion se quiere usar el FPU recién ahí se resguardan todos los registros de la FPU.
+
+16. Explique las características avanzadas de atención a interrupciones: tail chaining y late arrival.
+tail chaining quiere decir que si cuando se esta ejecutando una interrupción salta otra, al terminar de atender la primer interrupcion no vuelvo al contexto normal de ejecución, sino que atiendo la segunda interrupcion y luego hago el cambio de contexto al de ejecución normal.
+Late arrival, si durante el stacking de la atención de una interrupción, salta otra de mayor prioridad el micro comienza un nuevo proceso de stacking para atender a la de mayor prioridad.
+
+17. ¿Qué es el systick? ¿Por qué puede afirmarse que su implementación favorece la portabilidad de los sistemas operativos embebidos?
+Es un periférico que define ARM, no todos lo tienen, los M0 no lo tienen. Los que lo tienen son todos iguales porque tiene que ser como lo define ARM. Es un contador de 24bits, se utiliza para generar la excepción 15  Systick, se puede sincronizar con el clock del procesador o con un clock  externo. El M0 no lo implementa porque no es un micro pensado para usarse con un sistema operativo. El systick se utiliza como base de tiempo en los sistemas operativos, es por esto que favorece a la portabilidad ya que estamos seguros que será igual para todos los fabricantes.
+
+18. ¿Qué funciones cumple la unidad de protección de memoria (MPU)?
+Puede gestionar hasta 8 regiones de memoria. Sirve para restringir el acceso a ciertas regiones de memoria. Evita la ejecución de código desde zonas no permitidas. Si los permisos son violados salta una excepcion. por default viene desactivada, la suelen utilizar los SO.
+
+19. ¿Cuántas regiones pueden configurarse como máximo? ¿Qué ocurre en caso de haber solapamientos de las regiones? ¿Qué ocurre con las zonas de memoria no cubiertas por las regiones definidas?
+Se pueden configurar 8 regiones, En caso de solapamiento la región queda con los permisos de la última zona definida. Las zonas no cubiertas por las regiones defindidas, depende como este seteado o no un bit de control. puede no estar permitido el acceso o solo permitido en nivel privilegiado.
+
+20. ¿Para qué se suele utilizar la excepción PendSV? ¿Cómo se relaciona su uso con el resto de las excepciones? Dé un ejemplo
+
+
+21. ¿Para qué se suele utilizar la excepción SVC? Expliquelo dentro de un marco de un sistema operativo embebido.
+
+
+ISA
+1. ¿Qué son los sufijos y para qué se los utiliza? Dé un ejemplo
+
+
+2. ¿Para qué se utiliza el sufijo ‘s’? Dé un ejemplo
+
+3. ¿Qué utilidad tiene la implementación de instrucciones de aritmética saturada? Dé un
+ejemplo con operaciones con datos de 8 bits.
+
+4. Describa brevemente la interfaz entre assembler y C ¿Cómo se reciben los argumentos
+de las funciones? ¿Cómo se devuelve el resultado? ¿Qué registros deben guardarse en la
+pila antes de ser modificados?
+
+5. ¿Qué es una instrucción SIMD? ¿En qué se aplican y que ventajas reporta su uso? Dé un
+ejemplo.
+
