@@ -85,17 +85,17 @@ Se pueden configurar 8 regiones, En caso de solapamiento la región queda con lo
 
 ISA
 1. ¿Qué son los sufijos y para qué se los utiliza? Dé un ejemplo
-
+los sufijos son letras que se les agregan a las intstrucciones para indicarles distintas funciones. por ejemplo a la instrucción ldr se le pueden agregar los sufijos b, sb, h, sh-
 
 2. ¿Para qué se utiliza el sufijo ‘s’? Dé un ejemplo
+el sufijo s sirve para completar los bits superiores con el bit de signo. Por ejemplo si estoy operando con valores de 16 bits, completo todo con el bit de signo para no cometer errores cuando opero.
 
-3. ¿Qué utilidad tiene la implementación de instrucciones de aritmética saturada? Dé un
-ejemplo con operaciones con datos de 8 bits.
+3. ¿Qué utilidad tiene la implementación de instrucciones de aritmética saturada? Dé un ejemplo con operaciones con datos de 8 bits.
+En el procesamiento de señales, por ejemplo sirve para saturar una señal con cierto volumen y no que el registro empiece de cero devuelta, eso me produciría un glich horrible en audio.
 
-4. Describa brevemente la interfaz entre assembler y C ¿Cómo se reciben los argumentos
-de las funciones? ¿Cómo se devuelve el resultado? ¿Qué registros deben guardarse en la
-pila antes de ser modificados?
+4. Describa brevemente la interfaz entre assembler y C ¿Cómo se reciben los argumentos de las funciones? ¿Cómo se devuelve el resultado? ¿Qué registros deben guardarse en la pila antes de ser modificados?
+Los primeros 4 argumentos de las funciones se reciben en los registros r0, r1, r2 y r3. Si tengo mas argumentos vienen en la pila. Todos los registros del r4 en adelante que quiera utilizar, antes de utilizarlo tengo que resguardarlo para que al terminar la función pueda devolver su valor y no romper el contexto de ejecución que llamo a esta función. 
 
-5. ¿Qué es una instrucción SIMD? ¿En qué se aplican y que ventajas reporta su uso? Dé un
-ejemplo.
+5. ¿Qué es una instrucción SIMD? ¿En qué se aplican y que ventajas reporta su uso? Dé un ejemplo.
+
 
