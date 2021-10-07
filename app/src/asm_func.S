@@ -10,6 +10,7 @@
 .global	asm_productoEscalar16
 .global	asm_productoEscalar12
 .global	asm_productoEscalar12B
+.global	asm_productoEscalar12SAT
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Prototipo en "C":
@@ -188,5 +189,35 @@
 		subs	r2, 1			@ --longitud y modifico los flags
 		bne		.loop5			@ si llegue a cero salgo del loop2
 	.fin5:
+		pop		{r4-r5}			@ recupero r5 y recupero r4
+		bx	lr
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Prototipo en "C":
+@ void asm_productoEscalar12 (uint16_t * vectorIn, uint16_t * vectorOut, uint32_t longitud, uint16_t escalar);
+@
+@ Parametros recibidos:
+@   r0: *vectorIn
+@   r1: *vectorOut
+@	r2: longitud
+@	r3: escalar
+@
+
+.thumb_func
+	asm_productoEscalar12SAT:
+		push	{r4-r5}		@ r4 lo voy a usar para tener el resultado de la multiplicacion
+							@ r5 lo voy a usar para cargar el valor de [r0]
+		subs	r4, r0, 1	@ le resto 1 a r0, si da negativo es que era null
+		bmi		.fin5		@ Si dio negativo salto, sino sigue
+		subs	r4, r1, 1	@ le resto 1 a r1, si da negativo es que era null y termino
+		bmi		.fin6
+	.loop6:
+		ldrh	r4, [r0], 2		@ cargo en r5 el valor apuntado por r0 e incremento r0 en 2
+		mul		r4, r3			@ r4 = r4 * r3
+		usat	r4, 12, r4
+		strh	r4, [r1], 2		@ cargo el resultado de la multiplicacion en [r1] e incremento en 2 a r1
+		subs	r2, 1			@ --longitud y modifico los flags
+		bne		.loop6			@ si llegue a cero salgo del loop2
+	.fin6:
 		pop		{r4-r5}			@ recupero r5 y recupero r4
 		bx	lr
