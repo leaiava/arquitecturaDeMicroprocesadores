@@ -4,7 +4,7 @@
 
 #include <stdlib.h>
 #include <stdnoreturn.h>
-
+#include "cmsis.h"
 
 
 // Variable que se incrementa cada vez que se llama al handler de interrupcion
@@ -19,6 +19,7 @@ static void Inicio (void)
     Board_Init ();
     SystemCoreClockUpdate ();
     SysTick_Config (SystemCoreClock / 1000);
+    //Board_Debug_Init();
 }
 
 
@@ -92,33 +93,35 @@ static void Producto16 (void)
 
 static void Producto12 (void)
 {
-	volatile uint32_t * DWT_CTRL = (uint32_t *)0xE0001000;
-	volatile uint32_t * DWT_CYCCNT = (uint32_t *)0xE0001004;
-	uint32_t lectura;
-	*DWT_CTRL |= 1;
+	// Activa contador de ciclos (iniciar una sola vez)
+	DWT->CTRL |= 1 << DWT_CTRL_CYCCNTENA_Pos;
 
-	static uint16_t vectorIn[] = { 0xFFFF, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+	static uint16_t vectorIn[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 	static uint16_t vectorOut1[]= { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	static uint16_t vectorOut2[]= { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	static uint16_t vectorOut3[]= { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	static uint16_t vectorOut4[]= { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	static uint32_t escalar = 0x1F000;
+	static uint32_t escalar = 2000;
 
-	*DWT_CYCCNT=0;
+	// Antes de la función a medir: contador de ciclos a cero
+	DWT->CYCCNT = 0;
 	c_productoEscalar12(vectorIn, vectorOut1, 10, escalar);
-	lectura = *DWT_CYCCNT;
+	volatile uint32_t ciclos = DWT->CYCCNT;
+	printf("c:%d\r\n",ciclos);
 
-	*DWT_CYCCNT=0;
+	DWT->CYCCNT = 0;
 	asm_productoEscalar12(vectorIn, vectorOut2, 10, escalar);
-	lectura = *DWT_CYCCNT;
-
-	*DWT_CYCCNT=0;
+	ciclos = DWT->CYCCNT;
+	printf("asm con subs:%d\r\n",ciclos);
+	DWT->CYCCNT = 0;
 	asm_productoEscalar12B(vectorIn, vectorOut3, 10, escalar);
-	lectura = *DWT_CYCCNT;
+	ciclos = DWT->CYCCNT;
+	printf("asm con ands:%d\r\n",ciclos);
 
-	*DWT_CYCCNT=0;
+	DWT->CYCCNT = 0;
 	asm_productoEscalar12SAT(vectorIn, vectorOut4, 10, escalar);
-	lectura = *DWT_CYCCNT;
+	ciclos = DWT->CYCCNT;
+	printf("asm con usat:%d\r\n",ciclos);
 }
 
 static void Ventana10(void)
@@ -241,9 +244,9 @@ int main (void)
 
     //Producto16();
 
-    //Producto12();
+    Producto12();
 
-    Ventana10();
+    //Ventana10();
 
     //Suma ();
 

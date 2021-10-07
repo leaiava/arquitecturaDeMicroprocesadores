@@ -11,6 +11,7 @@
 .global	asm_productoEscalar12
 .global	asm_productoEscalar12B
 .global	asm_productoEscalar12SAT
+.global	asm_filtroVentana10
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Prototipo en "C":
@@ -208,16 +209,39 @@
 		push	{r4-r5}		@ r4 lo voy a usar para tener el resultado de la multiplicacion
 							@ r5 lo voy a usar para cargar el valor de [r0]
 		subs	r4, r0, 1	@ le resto 1 a r0, si da negativo es que era null
-		bmi		.fin5		@ Si dio negativo salto, sino sigue
+		bmi		.fin6		@ Si dio negativo salto, sino sigue
 		subs	r4, r1, 1	@ le resto 1 a r1, si da negativo es que era null y termino
 		bmi		.fin6
 	.loop6:
-		ldrh	r4, [r0], 2		@ cargo en r5 el valor apuntado por r0 e incremento r0 en 2
+		ldrh	r4, [r0], 2		@ cargo en r4 el valor apuntado por r0 e incremento r0 en 2
 		mul		r4, r3			@ r4 = r4 * r3
 		usat	r4, 12, r4
 		strh	r4, [r1], 2		@ cargo el resultado de la multiplicacion en [r1] e incremento en 2 a r1
 		subs	r2, 1			@ --longitud y modifico los flags
 		bne		.loop6			@ si llegue a cero salgo del loop2
 	.fin6:
+		pop		{r4-r5}			@ recupero r5 y recupero r4
+		bx	lr
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Prototipo en "C":
+@ extern void asm_filtroVentana10(uint16_t * vectorIn, uint16_t * vectorOut, uint32_t longitudVectorIn);
+@
+@ Parametros recibidos:
+@   r0: *vectorIn
+@   r1: *vectorOut
+@	r2: longitud
+
+.thumb_func
+	asm_filtroVentana10:
+		push	{r4-r5}		@ r4 lo voy a usar para tener el resultado de la multiplicacion
+							@ r5 lo voy a usar para cargar el valor de [r0]
+		subs	r4, r0, 1	@ le resto 1 a r0, si da negativo es que era null
+		bmi		.fin7		@ Si dio negativo salto, sino sigue
+		subs	r4, r1, 1	@ le resto 1 a r1, si da negativo es que era null y termino
+		bmi		.fin7
+		subs	r4, r2, 10 @ le resto 10, si da negativo es que la longitud es menor a 10
+		bmi		.fin7
+
+	.fin7:
 		pop		{r4-r5}			@ recupero r5 y recupero r4
 		bx	lr
