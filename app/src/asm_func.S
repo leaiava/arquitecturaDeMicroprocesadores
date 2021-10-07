@@ -9,6 +9,7 @@
 .global	asm_productoEscalar32
 .global	asm_productoEscalar16
 .global	asm_productoEscalar12
+.global	asm_productoEscalar12B
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Prototipo en "C":
@@ -143,15 +144,49 @@
 		bmi		.fin4
 		movw	r6, 0x0FFF
 	.loop4:
-		ldrh	r5, [r0], 2		@ cargo en r5 el valor apuntado por r0 e incremento r0 en 4
+		ldrh	r5, [r0], 2		@ cargo en r5 el valor apuntado por r0 e incremento r0 en 2
 		mul		r4, r5, r3		@ r4 = r5 * r3
 		subs	r7, r4, r6		@ le resto al resultado de la multiplicación 0X0FFF
 		bmi		.menorA12bits	@ Si da negativo salto, significa que la multiplicacion es menor a 0x0FFF
 		mov		r4, r6			@ Si no salto es porque la multiplicacion es mayor a 0x0FFF, muevo 0x0FFF como resultado saturado
 	.menorA12bits:
-		strh	r4, [r1], 2		@ cargo el resultado de la multiplicacion en [r1] e incremento en 4 a r1
+		strh	r4, [r1], 2		@ cargo el resultado de la multiplicacion en [r1] e incremento en 2 a r1
 		subs	r2, 1			@ --longitud y modifico los flags
 		bne		.loop4			@ si llegue a cero salgo del loop2
 	.fin4:
 		pop		{r4-r7}			@ recupero r5 y recupero r4
+		bx	lr
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Prototipo en "C":
+@ void asm_productoEscalar12 (uint16_t * vectorIn, uint16_t * vectorOut, uint32_t longitud, uint16_t escalar);
+@
+@ Parametros recibidos:
+@   r0: *vectorIn
+@   r1: *vectorOut
+@	r2: longitud
+@	r3: escalar
+@
+
+.thumb_func
+	asm_productoEscalar12B:
+		push	{r4-r5}		@ r4 lo voy a usar para tener el resultado de la multiplicacion
+							@ r5 lo voy a usar para cargar el valor de [r0]
+							@ r6 lo uso para tener cargado el valor 0x0FFF
+							@ r7 para calcular la resta que compara si la multiplicacion es mayor a 12bits (0x0FFF)
+		subs	r4, r0, 1	@ le resto 1 a r0, si da negativo es que era null
+		bmi		.fin5		@ Si dio negativo salto, sino sigue
+		subs	r4, r1, 1	@ le resto 1 a r1, si da negativo es que era null y termino
+		bmi		.fin5
+	.loop5:
+		ldrh	r4, [r0], 2		@ cargo en r5 el valor apuntado por r0 e incremento r0 en 2
+		mul		r4, r3			@ r4 = r4 * r3
+		ands	r5, r4, 0xF000
+		beq		.not_saturate
+		movw	r4, 0xFFF		@ le resto al resultado de la multiplicación 0X0FFF
+	.not_saturate:
+		strh	r4, [r1], 2		@ cargo el resultado de la multiplicacion en [r1] e incremento en 2 a r1
+		subs	r2, 1			@ --longitud y modifico los flags
+		bne		.loop5			@ si llegue a cero salgo del loop2
+	.fin5:
+		pop		{r4-r5}			@ recupero r5 y recupero r4
 		bx	lr

@@ -92,14 +92,28 @@ static void Producto16 (void)
 
 static void Producto12 (void)
 {
+	volatile uint32_t * DWT_CTRL = (uint32_t *)0xE0001000;
+	volatile uint32_t * DWT_CYCCNT = (uint32_t *)0xE0001004;
+	uint32_t lectura;
+	*DWT_CTRL |= 1;
+
 	static uint16_t vectorIn[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 	static uint16_t vectorOut1[]= { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	static uint16_t vectorOut2[]= { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	static uint32_t escalar = 2000;
+	static uint16_t vectorOut3[]= { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	static uint32_t escalar = 20;
 
+	*DWT_CYCCNT=0;
 	c_productoEscalar12(vectorIn, vectorOut1, 10, escalar);
+	lectura = *DWT_CYCCNT;
 
+	*DWT_CYCCNT=0;
 	asm_productoEscalar12(vectorIn, vectorOut2, 10, escalar);
+	lectura = *DWT_CYCCNT;
+
+	*DWT_CYCCNT=0;
+	asm_productoEscalar12B(vectorIn, vectorOut3, 10, escalar);
+	lectura = *DWT_CYCCNT;
 }
 
 static void LlamandoAMalloc (void)
