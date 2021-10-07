@@ -121,6 +121,21 @@ static void Producto12 (void)
 	lectura = *DWT_CYCCNT;
 }
 
+static void Ventana10(void)
+{
+	volatile uint32_t * DWT_CTRL = (uint32_t *)0xE0001000;
+	volatile uint32_t * DWT_CYCCNT = (uint32_t *)0xE0001004;
+	uint32_t lectura;
+	*DWT_CTRL |= 1;
+
+	static uint16_t vectorIn[] = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000,
+								   100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
+	static uint16_t vectorOut1[]= { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+	*DWT_CYCCNT=0;
+	c_filtroVentana10(vectorIn, vectorOut1, 20);
+	lectura = *DWT_CYCCNT;
+}
 static void LlamandoAMalloc (void)
 {
     // De donde saca memoria malloc?
@@ -226,7 +241,9 @@ int main (void)
 
     //Producto16();
 
-    Producto12();
+    //Producto12();
+
+    Ventana10();
 
     //Suma ();
 
