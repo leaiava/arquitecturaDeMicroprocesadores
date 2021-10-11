@@ -13,6 +13,7 @@
 .global	asm_productoEscalar12B
 .global	asm_productoEscalar12SAT
 .global	asm_filtroVentana10
+.global asm_pack32to16
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Prototipo en "C":
@@ -269,3 +270,31 @@
 	.fin7:
 		pop		{r3-r8}		@ recupero registros
 		bx	lr
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Prototipo en "C":
+@ extern void asm_pack32to16 (int32_t * vectorIn, int16_t *vectorOut, uint32_t longitud);
+@
+@ Parametros recibidos:
+@   r0: *vectorIn
+@   r1: *vectorOut
+@	r2: longitud
+@	r3: variable auxiliar
+.thumb_func
+	asm_pack32to16:
+		push	{r3}		@ r3 lo voy a usar para ver si los argumentos son correctos
+		cmp		r0, 0		@ comparo con cero
+		beq		.fin8		@ Si dio que son iguales la comparacion salto
+		cmp		r1, 0
+		beq		.fin8
+		cmp		r2, 0
+		beq		.fin8
+	.loop8:
+		ldr		r3, [r0], 4
+		lsr		r3, 16
+		str		r3, [r1], 2
+		subs	r2, 1
+		bne		.loop8
+	.fin8:
+		pop		{r3}
+		bx		lr

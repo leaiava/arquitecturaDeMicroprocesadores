@@ -160,7 +160,7 @@ void pack32to16(void)
 	printf("c_pack32to16:%d\r\n",ciclos);
 
 	DWT->CYCCNT = 0;
-	//asm_pack32to16(vectorIn, vectorOut2, 5);
+	asm_pack32to16(vectorIn, vectorOut2, 5);
 	ciclos = DWT->CYCCNT;
 	printf("asm:%d\r\n",ciclos);
 }
