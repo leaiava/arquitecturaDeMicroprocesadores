@@ -1,3 +1,4 @@
+#define TAMANIO_VENTANA	10
 .syntax unified
 .thumb
 .text
@@ -233,15 +234,38 @@
 
 .thumb_func
 	asm_filtroVentana10:
-		push	{r4-r5}		@ r4 lo voy a usar para tener el resultado de la multiplicacion
+		push	{r3-r8}		@ r3 lo voy a usar para ver si los argumentos son correctos
+							@ Luego r3 lo uso para tener otro indice aparte del de longuitud
+							@ r4 lo uso de auxiliar
 							@ r5 lo voy a usar para cargar el valor de [r0]
-		subs	r4, r0, 1	@ le resto 1 a r0, si da negativo es que era null
+							@ r6 auxiliar para tner la resta entre indices.
+							@ r7 auxiliar para tener el resultado de la division
+							@r8 para tener copia de r0
+		subs	r3, r0, 1	@ le resto 1 a r0, si da negativo es que era null
 		bmi		.fin7		@ Si dio negativo salto, sino sigue
-		subs	r4, r1, 1	@ le resto 1 a r1, si da negativo es que era null y termino
+		subs	r3, r1, 1	@ le resto 1 a r1, si da negativo es que era null y termino
 		bmi		.fin7
-		subs	r4, r2, 10 @ le resto 10, si da negativo es que la longitud es menor a 10
+		subs	r3, r2, TAMANIO_VENTANA	@ le resto 10, si da negativo es que la longitud es menor a 10
 		bmi		.fin7
+		mov		r8, r0		@ copia de r0 para tener otro indie.
+
+		mov		r4, 0		@ inicializo r4 en 0
+		mov		r3, r2		@ Muevo Longitud a r3 para tener otro indice de longitud.
+	.lazo1:					@ bucle para hacer la suma de los ultimos 10 lugares
+		ldrh	r5, [r0], 2	@ cargo en r5 el valor apuntado por r0 e incremento r0 en 2
+		add		r4, r5		@ r4 = r4 + r5
+		subs	r3, 1		@ le resto 1 al indice en r3
+		subs	r6, r2, r3	@ r6 = r2 - r3
+		udiv	r7, r4, r6	@ r7 = r4 / r6
+		strh	r7, [r1], 2	@ Cargo en memoria, en la dirección de r1 el resultado de la division e incremento en 2
+		cmp		r6, TAMANIO_VENTANA	@ comparo contra 10, si son iguales dejo de saltar.
+		bne		.lazo1
+		ldrh	r5, [r8], 2 @ Cargo en r5 el primer valor para restar
+		sub		r2, 1
+		sub		r4, r5		@ r4 = r4 - r5
+		cmp		r3, 0
+		bne		.lazo1		@ mientras no sea cero sigo en el bucle, cuando llegué a cero termine
 
 	.fin7:
-		pop		{r4-r5}			@ recupero r5 y recupero r4
+		pop		{r3-r8}		@ recupero registros
 		bx	lr

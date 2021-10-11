@@ -126,18 +126,22 @@ static void Producto12 (void)
 
 static void Ventana10(void)
 {
-	volatile uint32_t * DWT_CTRL = (uint32_t *)0xE0001000;
-	volatile uint32_t * DWT_CYCCNT = (uint32_t *)0xE0001004;
-	uint32_t lectura;
-	*DWT_CTRL |= 1;
+	// Activa contador de ciclos (iniciar una sola vez)
+	DWT->CTRL |= 1 << DWT_CTRL_CYCCNTENA_Pos;
 
 	static uint16_t vectorIn[] = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000,
 								   100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
 	static uint16_t vectorOut1[]= { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	static uint16_t vectorOut2[]= { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-	*DWT_CYCCNT=0;
+	DWT->CYCCNT = 0;
 	c_filtroVentana10(vectorIn, vectorOut1, 20);
-	lectura = *DWT_CYCCNT;
+	volatile uint32_t ciclos = DWT->CYCCNT;
+	printf("c:%d\r\n",ciclos);
+
+	DWT->CYCCNT = 0;
+	asm_filtroVentana10(vectorIn, vectorOut2, 20);
+	printf("asm:%d\r\n",ciclos);
 }
 static void LlamandoAMalloc (void)
 {
@@ -244,9 +248,9 @@ int main (void)
 
     //Producto16();
 
-    Producto12();
+    //Producto12();
 
-    //Ventana10();
+    Ventana10();
 
     //Suma ();
 
