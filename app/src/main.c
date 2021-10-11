@@ -182,6 +182,26 @@ void Max(void)
 	ciclos = DWT->CYCCNT;
 	printf("asm_max:%d\r\n",ciclos);
 }
+
+void Invertir(void)
+{
+	// Activa contador de ciclos (iniciar una sola vez)
+	DWT->CTRL |= 1 << DWT_CTRL_CYCCNTENA_Pos;
+
+	static uint16_t vector1[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+	static uint16_t vector2[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+	DWT->CYCCNT = 0;
+	c_invertir(vector1, 10);
+	volatile uint32_t ciclos = DWT->CYCCNT;
+	printf("c_invertir:%d\r\n",ciclos);
+
+	DWT->CYCCNT = 0;
+	asm_invertir(vector2, 10);
+	ciclos = DWT->CYCCNT;
+	printf("asm_invertir:%d\r\n",ciclos);
+}
+
 static void LlamandoAMalloc (void)
 {
     // De donde saca memoria malloc?
@@ -293,7 +313,9 @@ int main (void)
 
 	//pack32to16();
 
-	Max();
+	//Max();
+
+	Invertir();
 
     //Suma ();
 
