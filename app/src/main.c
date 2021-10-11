@@ -137,12 +137,34 @@ static void Ventana10(void)
 	DWT->CYCCNT = 0;
 	c_filtroVentana10(vectorIn, vectorOut1, 20);
 	volatile uint32_t ciclos = DWT->CYCCNT;
-	printf("c:%d\r\n",ciclos);
+	printf("c_ventana10:%d\r\n",ciclos);
 
 	DWT->CYCCNT = 0;
 	asm_filtroVentana10(vectorIn, vectorOut2, 20);
+	ciclos = DWT->CYCCNT;
+	printf("asm_ventana10:%d\r\n",ciclos);
+}
+
+void pack32to16(void)
+{
+
+	// Activa contador de ciclos (iniciar una sola vez)
+	DWT->CTRL |= 1 << DWT_CTRL_CYCCNTENA_Pos;
+
+	static uint32_t vectorIn[] = {0x12345678, 0x23456789, 0x34567890, 0x87654321, 0x98765432};
+	static uint16_t vectorOut1[5];
+	static uint16_t vectorOut2[5];
+	DWT->CYCCNT = 0;
+	c_pack32to16(vectorIn, vectorOut1, 5);
+	volatile uint32_t ciclos = DWT->CYCCNT;
+	printf("c_pack32to16:%d\r\n",ciclos);
+
+	DWT->CYCCNT = 0;
+	//asm_pack32to16(vectorIn, vectorOut2, 5);
+	ciclos = DWT->CYCCNT;
 	printf("asm:%d\r\n",ciclos);
 }
+
 static void LlamandoAMalloc (void)
 {
     // De donde saca memoria malloc?
@@ -251,6 +273,8 @@ int main (void)
     //Producto12();
 
     Ventana10();
+
+	pack32to16();
 
     //Suma ();
 
