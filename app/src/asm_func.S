@@ -15,6 +15,7 @@
 .global	asm_filtroVentana10
 .global asm_pack32to16
 .global asm_max
+.global asm_invertir
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Prototipo en "C":
@@ -342,3 +343,39 @@
 		mov		r0, -1
 		pop		{r2-r6}
 		bx		lr
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Prototipo en "C":
+@ extern void asm_invertir (uint16_t * vector, uint32_t longitud);
+@
+@ Parametros recibidos:
+@   r0: *vector
+@	r1: longitud
+@	r2: donde cargo el valor apuntado por el vector
+@	r3: auxiliar para mover los datos
+@	r4: direccion del final del vector
+@	r5: variable auxiliar donde guardo el indice actual
+@	r6: auxiliar para calcular la resta
+.thumb_func
+	asm_invertir:
+		push	{r2-r4}
+		cmp		r0, 0		@ comparo con cero
+		beq		.fin10		@ Si dio que son iguales la comparacion salto
+		cmp		r1, 0
+		beq		.fin10
+
+		mov		r4, r0		@ Copio en r4 la direccion del vector
+		add		r4, r1
+		add 	r4, r1		@ le sumo el largo del vector 2 veces porque son 2 bytes (16 bits)
+		sub		r4, 2		@ le resto 2 para termianr apuntando al último
+		lsr		r1, 1		@ divido por 2 a la longitud
+	.loop11:
+		ldrh	r2, [r0]
+		ldrh	r3, [r4]
+		strh	r2, [r4], -2
+		strh	r3, [r0], 2
+		subs	r1, 1
+		bne		.loop11
+	.fin10:
+		pop	{r2-r4}
+		bx	lr
