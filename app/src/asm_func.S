@@ -14,6 +14,7 @@
 .global	asm_productoEscalar12SAT
 .global	asm_filtroVentana10
 .global asm_pack32to16
+.global asm_max
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Prototipo en "C":
@@ -297,4 +298,47 @@
 		bne		.loop8
 	.fin8:
 		pop		{r3}
+		bx		lr
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Prototipo en "C":
+@ extern int32_t asm_max (int32_t * vectorIn, uint32_t longitud);
+@
+@ Parametros recibidos:
+@   r0: *vectorIn
+@	r1: longitud
+@	r2: variable auxiliar donde voy a guardar el indice del máximo valor
+@	r3: donde cargo lo apuntado por r0
+@	r4: donde guardo el máximo del vector
+@	r5: variable auxiliar donde guardo el indice actual
+@	r6: auxiliar para calcular la resta
+.thumb_func
+	asm_max:
+		push	{r2-r6}
+		cmp		r0, 0		@ comparo con cero
+		beq		.finXNull	@ Si dio que son iguales la comparacion salto
+		cmp		r1, 0
+		beq		.finXNull
+
+		mov		r2, 0		@ r2 = 0 Inicializo el máximo a cero
+		mov		r5, 0		@ r5 = 0 Inicializo el indice a cero
+		ldr		r4, [r0], 4	@ r4 = vectorIn[0]
+	.loop9:
+		add		r5, 1
+		subs	r6, r1, r5	@ r6 = r1 - r5 (si da cero llegue al final del vector y termino
+		beq		.fin9
+		ldr		r3, [r0], 4	@ r3 = vectorIn[1]
+		subs	r6, r3, r4	@ r6 = r3 - r4
+		bmi		.loop10		@ Si r4 es mayor me salteo estas instrucciones porque no tengo que cambiar al máximo
+		mov		r2, r5		@ r2 = r5
+		mov		r4, r3		@ r4 = r3
+	.loop10:
+		b		.loop9
+	.fin9:
+		mov		r0, r2
+		pop		{r2-r6}
+		bx		lr
+	.finXNull:				@ Si la función recibió un parametro Null retorna -1 indicando el error
+		mov		r0, -1
+		pop		{r2-r6}
 		bx		lr

@@ -171,13 +171,14 @@ void Max(void)
 
 	static uint32_t vectorIn[] = { 1, 2, 10, 4, 5};
 	volatile int32_t maximo;
+
 	DWT->CYCCNT = 0;
 	maximo = c_max(vectorIn, 5);
 	volatile uint32_t ciclos = DWT->CYCCNT;
 	printf("c_max:%d\r\n",ciclos);
 
 	DWT->CYCCNT = 0;
-	//asm_max(vectorIn, 5);
+	maximo = asm_max(vectorIn, 5);
 	ciclos = DWT->CYCCNT;
 	printf("asm_max:%d\r\n",ciclos);
 }

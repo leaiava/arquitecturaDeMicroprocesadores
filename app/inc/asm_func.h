@@ -12,4 +12,5 @@ extern void asm_productoEscalar12B (uint16_t * vectorIn, uint16_t * vectorOut, u
 extern void asm_productoEscalar12SAT (uint16_t * vectorIn, uint16_t * vectorOut, uint32_t longitud, uint16_t escalar);
 extern void asm_filtroVentana10(uint16_t * vectorIn, uint16_t * vectorOut, uint32_t longitudVectorIn);
 extern void asm_pack32to16 (int32_t * vectorIn, int16_t *vectorOut, uint32_t longitud);
+extern int32_t asm_max (int32_t * vectorIn, uint32_t longitud);
 extern void asm_svc (void);
