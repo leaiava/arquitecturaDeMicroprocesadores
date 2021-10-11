@@ -70,3 +70,16 @@ void c_pack32to16 (int32_t * vectorIn, int16_t *vectorOut, uint32_t longitud)
 		vectorOut[i] = (uint16_t) (vectorIn[i] >> 16);
 	}
 }
+
+int32_t c_max (int32_t * vectorIn, uint32_t longitud)
+{
+	if (longitud == 0 || vectorIn == 0 )
+			return -1;
+	int32_t maximo = 0;
+	for (uint32_t i = 0; i < longitud ; i++)
+	{
+		if ( vectorIn[i] > vectorIn[maximo])
+			maximo = i;
+	}
+	return maximo;
+}
