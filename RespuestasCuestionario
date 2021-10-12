@@ -7,7 +7,7 @@ Microcontroller: Orientados a productos de consumo masivo y compactos. Algunos i
 
 1. Describa brevemente las diferencias entre las familias de procesadores Cortex M0, M3 y M4.
 M0: Orientados a bajo consumo y bajo costo. Tienen una arquitectura de memoria tipo Von Neuman, esto quiere decir que tienen un solo bus de datos hacia la memoria, osea que por el mismo bus tienen que leer las instrucciones y los datos.
-M3 y M4 tienen una arquitectura de memoria tipo Harvard, esto quiere decir que tienen 2 buses hacia la memoria, uno para las instrucciones y otro para los datos. Como estan orientados a utilizar un OS incorporan un systick. El set de instrucciones es mayor que en M0, incorporan division por hardware y en el caso de los M4 opcionalmente FPU (floating point unit)
+M3 y M4 tienen una arquitectura de memoria tipo Harvard, esto quiere decir que tienen 2 buses hacia la memoria, uno para las instrucciones y otro para los datos. Como estan orientados a utilizar un OS incorporan un systick. El set de instrucciones es mayor que en M0, incorporan division por hardware y en el caso de los M4 opcionalmente FPU (floating point unit). Los M4 también incorporan instrucciones tipo SIMD, que junto a las instrucciones de aritmética saturada permiten hacer DSP.
 
 2. ¿Por qué se dice que el set de instrucciones Thumb permite mayor densidad de código?
 Porque son instrucciones de 16 bits, por lo que entran el doble de instrucciones en la misma memoria. 
