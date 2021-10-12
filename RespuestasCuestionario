@@ -78,10 +78,10 @@ Puede gestionar hasta 8 regiones de memoria. Sirve para restringir el acceso a c
 Se pueden configurar 8 regiones, En caso de solapamiento la región queda con los permisos de la última zona definida. Las zonas no cubiertas por las regiones defindidas, depende como este seteado o no un bit de control. puede no estar permitido el acceso o solo permitido en nivel privilegiado.
 
 20. ¿Para qué se suele utilizar la excepción PendSV? ¿Cómo se relaciona su uso con el resto de las excepciones? Dé un ejemplo
-
+Son excepciones que estan pensadas para ser usadas por un SO para realizar los cambios de contexto. Normalmente cuando hay una excepcion, al terminar la excepcion se debería volver al mismo contexto que se estaba antes, teniendo como de intermediario a pendSVC el sistema operativo puede elegir el cambio de contexto.
 
 21. ¿Para qué se suele utilizar la excepción SVC? Expliquelo dentro de un marco de un sistema operativo embebido.
-
+Es una interrupcion por software. Se puede usar por ejemplo para pasar de un modo no privilegiado a un modo privilegiado. La única manera de modificar el registro de control que dice si estoy ejecutando codigo en modo privilegiado o no privilegiado es estando en modo privilegiado. Como todas las excepciones se ejecutan en modo privilegiado dentro de SVC puedo setear el modo de privilegio para volver a ejecutar codigo privilegiado.
 
 ISA
 1. ¿Qué son los sufijos y para qué se los utiliza? Dé un ejemplo
