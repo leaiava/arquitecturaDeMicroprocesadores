@@ -7,7 +7,7 @@ Microcontroller: Orientados a productos de consumo masivo y compactos. Algunos i
 
 1. Describa brevemente las diferencias entre las familias de procesadores Cortex M0, M3 y M4.
 M0: Orientados a bajo consumo y bajo costo. Tienen una arquitectura de memoria tipo Von Neuman, esto quiere decir que tienen un solo bus de datos hacia la memoria, osea que por el mismo bus tienen que leer las instrucciones y los datos.
-M3 y M4 tienen una arquitectura de memoria tipo Harvard, esto quiere decir que tienen 2 buses hacia la memoria, uno para las instrucciones y otro para los datos. Como estan orientados a utilizar un OS incorporan un systick. El set de instrucciones es mayor que en M0, incorporan division por hardware y en el caso de los M4 opcionalmente FPU (floating point unit)
+M3 y M4 tienen una arquitectura de memoria tipo Harvard, esto quiere decir que tienen 2 buses hacia la memoria, uno para las instrucciones y otro para los datos. Como estan orientados a utilizar un OS incorporan un systick. El set de instrucciones es mayor que en M0, incorporan division por hardware y en el caso de los M4 opcionalmente FPU (floating point unit). Los M4 también incorporan instrucciones tipo SIMD, que junto a las instrucciones de aritmética saturada permiten hacer DSP.
 
 2. ¿Por qué se dice que el set de instrucciones Thumb permite mayor densidad de código?
 Porque son instrucciones de 16 bits, por lo que entran el doble de instrucciones en la misma memoria. 
@@ -78,10 +78,10 @@ Puede gestionar hasta 8 regiones de memoria. Sirve para restringir el acceso a c
 Se pueden configurar 8 regiones, En caso de solapamiento la región queda con los permisos de la última zona definida. Las zonas no cubiertas por las regiones defindidas, depende como este seteado o no un bit de control. puede no estar permitido el acceso o solo permitido en nivel privilegiado.
 
 20. ¿Para qué se suele utilizar la excepción PendSV? ¿Cómo se relaciona su uso con el resto de las excepciones? Dé un ejemplo
-
+Son excepciones que estan pensadas para ser usadas por un SO para realizar los cambios de contexto. Normalmente cuando hay una excepcion, al terminar la excepcion se debería volver al mismo contexto que se estaba antes, teniendo como de intermediario a pendSVC el sistema operativo puede elegir el cambio de contexto.
 
 21. ¿Para qué se suele utilizar la excepción SVC? Expliquelo dentro de un marco de un sistema operativo embebido.
-
+Es una interrupcion por software. Se puede usar por ejemplo para pasar de un modo no privilegiado a un modo privilegiado. La única manera de modificar el registro de control que dice si estoy ejecutando codigo en modo privilegiado o no privilegiado es estando en modo privilegiado. Como todas las excepciones se ejecutan en modo privilegiado dentro de SVC puedo setear el modo de privilegio para volver a ejecutar codigo privilegiado.
 
 ISA
 1. ¿Qué son los sufijos y para qué se los utiliza? Dé un ejemplo
