@@ -221,7 +221,7 @@ void Eco(void)
 	printf("c_eco:%d\r\n",ciclos);
 
 	DWT->CYCCNT = 0;
-	//asm_eco(vectorIn, vectorOut2);
+	asm_eco(vectorIn, vectorOut2);
 	ciclos = DWT->CYCCNT;
 	printf("asm_eco:%d\r\n",ciclos);
 }

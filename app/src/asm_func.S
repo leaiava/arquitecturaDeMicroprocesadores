@@ -16,6 +16,7 @@
 .global asm_pack32to16
 .global asm_max
 .global asm_invertir
+.global asm_eco
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Prototipo en "C":
@@ -379,3 +380,45 @@
 	.fin10:
 		pop	{r2-r4}
 		bx	lr
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Prototipo en "C":
+@ extern void asm_eco (uint16_t * vectorIn, uint16_t * vectorOut);
+@
+@ Parametros recibidos:
+@   r0: *vectorIn
+@	r1: *vectorOut
+@	r2: copia de la direccion del vectorIn
+@	r3: donde cargo el valor apuntado por el vectorIn
+@	r4: Indice
+@	r5: variable auxiliar
+
+
+.thumb_func
+	asm_eco:
+		push	{r2-r5,lr}
+		cmp		r0, 0		@ comparo con cero
+		beq		.fin11		@ Si dio que son iguales la comparacion salto
+		cmp		r1, 0
+		beq		.fin11
+
+		mov 	r2, r0
+		movw	r4, 882
+	.loop12:
+		ldrh	r3, [r0], 2
+		strh	r3, [r1], 2
+		subs	r4, 1
+		bpl		.loop12		@ mientras es positivo salto
+
+		movw		r4, 3214	@ 4096 - 882 = 3214
+	.loop13:
+		ldrh	r3, [r0], 2
+		ldrh	r5, [r2], 2
+		lsr		r5, 1
+		add		r3, r5
+		strh	r3, [r1], 2
+		subs	r4, 1
+		bpl		.loop13
+	.fin11:
+		pop	{r2-r5,pc}
+
