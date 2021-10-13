@@ -101,6 +101,8 @@ void c_invertir (uint16_t * vector, uint32_t longitud)
 #define MUESTRAS_EN_20MS	882
 void c_eco (uint16_t * vectorIn, uint16_t * vectorOut)
 {
+	if (vectorIn == 0 || vectorOut == 0 )
+				return ;
 	for (uint32_t i = 0 ; i < LONGITUD_VECTOR ; i++ )
 	{
 		if (i < MUESTRAS_EN_20MS)
