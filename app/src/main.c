@@ -202,6 +202,30 @@ void Invertir(void)
 	printf("asm_invertir:%d\r\n",ciclos);
 }
 
+void Eco(void)
+{
+	// Activa contador de ciclos (iniciar una sola vez)
+	DWT->CTRL |= 1 << DWT_CTRL_CYCCNTENA_Pos;
+
+	static uint16_t vectorIn[4096] , vectorOut1[4096], vectorOut2[4096];
+
+
+	for( uint32_t i = 0 ; i < 4096 ; i++)
+	{
+		vectorIn[i] = i ;
+	}
+
+	DWT->CYCCNT = 0;
+	c_eco(vectorIn, vectorOut1);
+	volatile uint32_t ciclos = DWT->CYCCNT;
+	printf("c_eco:%d\r\n",ciclos);
+
+	DWT->CYCCNT = 0;
+	//asm_eco(vectorIn, vectorOut2);
+	ciclos = DWT->CYCCNT;
+	printf("asm_eco:%d\r\n",ciclos);
+}
+
 static void LlamandoAMalloc (void)
 {
     // De donde saca memoria malloc?
@@ -315,7 +339,9 @@ int main (void)
 
 	//Max();
 
-	Invertir();
+	//Invertir();
+
+	Eco();
 
     //Suma ();
 

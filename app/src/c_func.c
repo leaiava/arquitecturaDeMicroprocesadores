@@ -97,3 +97,15 @@ void c_invertir (uint16_t * vector, uint32_t longitud)
 	}
 }
 
+#define LONGITUD_VECTOR		4096
+#define MUESTRAS_EN_20MS	882
+void c_eco (uint16_t * vectorIn, uint16_t * vectorOut)
+{
+	for (uint32_t i = 0 ; i < LONGITUD_VECTOR ; i++ )
+	{
+		if (i < MUESTRAS_EN_20MS)
+			*(vectorOut + i) = *(vectorIn + i);
+		else
+			*(vectorOut + i) = *(vectorIn + i) + (*(vectorIn + i - MUESTRAS_EN_20MS)) / 2;
+	}
+}

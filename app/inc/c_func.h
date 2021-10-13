@@ -20,3 +20,5 @@ void c_pack32to16 (int32_t * vectorIn, int16_t *vectorOut, uint32_t longitud);
 int32_t c_max (int32_t * vectorIn, uint32_t longitud);
 
 void c_invertir (uint16_t * vector, uint32_t longitud);
+
+void c_eco (uint16_t * vectorIn, uint16_t * vectorOut);
