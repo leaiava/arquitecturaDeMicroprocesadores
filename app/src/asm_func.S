@@ -453,10 +453,12 @@
 		bpl		.loop14		@ mientras es positivo salto
 
 		movw		r4, 3214	@ 4096 - 882 = 3214
+		mov			r6, 0
 	.loop15:
 		ldr		r3, [r0], 4
 		ldr		r5, [r2], 4
-		uhadd16	r6, r3 , r5
+		uhadd16	r5, r5, r6
+		uadd16	r3, r3, r5
 		str		r3, [r1], 4
 		subs	r4, 1
 		bpl		.loop15
