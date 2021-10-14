@@ -25,6 +25,7 @@ El MSP es el stack pointer que se ejecuta en modo privilegiado y el PSP en modo 
 El MCU puede ejecutar código en modo thread o en modo handler. En modo thread a su vez puede hacerlo en modo privilegiado o no privilegiado. Cuando está en modo privilegiado tiene acceso a todo, en modo no privilegiado se restringe el acceso a ciertos registros internos y sectores de memoria. El modo handler, es el modo en el que se ejecutan las excepciones y solo corren en modo privilegiado. No se puede pasar desde el modo thread no privilegiado al privilegiado directamente ya que no tengo los permisos correspondientes. Solo se puede volver al modo privilegiado desde una interrupción ya que las interrupciones están corriendo en modo privilegiado.
 
 7. ¿Qué se entiende por modelo de registros ortogonal? Dé un ejemplo
+Quiere decir que todos los registros se pueden utilizar con todas las instrucciones (salvo el r13, r14 y r15).
 
 8. ¿Qué ventajas presenta el uso de instrucciones de ejecución condicional (IT)? Dé un ejemplo
 Puedo ejecutar una instrucción u otra sin generar un salto, por lo que no se rompe el pipeline y el código es mucho más eficiente.
