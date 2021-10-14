@@ -453,13 +453,13 @@
 		bpl		.loop14		@ mientras es positivo salto
 
 		movw		r4, 3214	@ 4096 - 882 = 3214
-		mov			r6, 0
+		mov			r6, 0	@ pongo el registro en cero para calcular el eco a la mitad con uhadd16
 	.loop15:
-		ldr		r3, [r0], 4
-		ldr		r5, [r2], 4 @ cargo la señal original para calcular el eco
+		ldr		r3, [r0], 4 @ cargo la señal a partir de donde tengo que aplicar el eco
+		ldr		r5, [r2], 4 @ cargo la señal apuntando al inicio del vector para crear el eco
 		uhadd16	r5, r5, r6	@ hago la suma SIMD con r6 que tiene cero para tener el eco/2
 		uadd16	r3, r3, r5	@ sumo a la señal el eco calculado en la instruccion anterior
-		str		r3, [r1], 4
+		str		r3, [r1], 4 @ cargo el vectorOut
 		subs	r4, 1
 		bpl		.loop15
 	.fin12:
