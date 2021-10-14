@@ -224,6 +224,13 @@ void Eco(void)
 	asm_eco(vectorIn, vectorOut2);
 	ciclos = DWT->CYCCNT;
 	printf("asm_eco:%d\r\n",ciclos);
+
+	DWT->CYCCNT = 0;
+	asm_ecoSIMD(vectorIn, vectorOut1);
+	ciclos = DWT->CYCCNT;
+	printf("asm_eco_SIMD:%d\r\n",ciclos);
+	printf("\r\n");
+
 }
 
 static void LlamandoAMalloc (void)

@@ -17,6 +17,7 @@
 .global asm_max
 .global asm_invertir
 .global asm_eco
+.global asm_ecoSIMD
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Prototipo en "C":
@@ -421,4 +422,44 @@
 		bpl		.loop13
 	.fin11:
 		pop	{r2-r5,pc}
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Prototipo en "C":
+@ extern void asm_eco_SIMD (uint16_t * vectorIn, uint16_t * vectorOut);
+@
+@ Parametros recibidos:
+@   r0: *vectorIn
+@	r1: *vectorOut
+@	r2: copia de la direccion del vectorIn
+@	r3: donde cargo el valor apuntado por el vectorIn
+@	r4: Indice
+@	r5: variable auxiliar
+
+
+.thumb_func
+	asm_ecoSIMD:
+		push	{r2-r6,lr}
+		cmp		r0, 0		@ comparo con cero
+		beq		.fin12		@ Si dio que son iguales la comparacion salto
+		cmp		r1, 0
+		beq		.fin12
+
+		mov 	r2, r0
+		movw	r4, 882
+	.loop14:
+		ldrh	r3, [r0], 2
+		strh	r3, [r1], 2
+		subs	r4, 1
+		bpl		.loop14		@ mientras es positivo salto
+
+		movw		r4, 3214	@ 4096 - 882 = 3214
+	.loop15:
+		ldr		r3, [r0], 4
+		ldr		r5, [r2], 4
+		uhadd16	r6, r3 , r5
+		str		r3, [r1], 4
+		subs	r4, 1
+		bpl		.loop15
+	.fin12:
+		pop	{r2-r6,pc}
 
