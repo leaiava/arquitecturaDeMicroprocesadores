@@ -456,9 +456,9 @@
 		mov			r6, 0
 	.loop15:
 		ldr		r3, [r0], 4
-		ldr		r5, [r2], 4
-		uhadd16	r5, r5, r6
-		uadd16	r3, r3, r5
+		ldr		r5, [r2], 4 @ cargo la señal original para calcular el eco
+		uhadd16	r5, r5, r6	@ hago la suma SIMD con r6 que tiene cero para tener el eco/2
+		uadd16	r3, r3, r5	@ sumo a la señal el eco calculado en la instruccion anterior
 		str		r3, [r1], 4
 		subs	r4, 1
 		bpl		.loop15
